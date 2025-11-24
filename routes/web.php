@@ -72,4 +72,19 @@ Route::middleware('web')->group(function () {
         Route::get('/notifications', [ProfileController::class, 'notifications'])->name('profile.notifications');
         Route::post('/notifications/{id}/read', [ProfileController::class, 'markRead'])->name('profile.notifications.read');
     });
+
+    // Guru: CRUD Tugas
+    Route::middleware(['web', 'auth', 'role:guru'])->prefix('guru')->name('guru.')->group(function () {
+        Route::resource('assignments', \App\Http\Controllers\Guru\AssignmentController::class);
+        Route::get('assignments/{assignment}/submissions', [\App\Http\Controllers\Guru\AssignmentController::class, 'submissions'])
+            ->name('assignments.submissions');
+    });
+
+    // Siswa: Lihat & Submit Tugas
+    Route::middleware(['web', 'auth', 'role:siswa'])->prefix('siswa')->name('siswa.')->group(function () {
+        Route::get('assignments', [\App\Http\Controllers\Siswa\AssignmentController::class, 'index'])
+            ->name('assignments.index');
+        Route::post('assignments/{assignment}/submit', [\App\Http\Controllers\Siswa\AssignmentController::class, 'submit'])
+            ->name('assignments.submit');
+    });
 });
